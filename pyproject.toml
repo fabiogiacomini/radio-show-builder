@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "radio-show-builder"
+version = "0.1.0"
+description = "Plan a radio show with your choice of AI, then assemble your own audio into a finished MP3."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Radio Show Builder contributors"}]
+dependencies = ["numpy>=1.24,<3", "python-docx>=1.1,<2"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Multimedia :: Sound/Audio :: Editors",
+]
+
+[project.scripts]
+radio-show-builder = "radio_show_builder.server:main"
+
+[tool.setuptools.package-data]
+radio_show_builder = ["static/*"]

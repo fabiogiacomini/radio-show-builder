@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "id": "00000000000000000000000000000000",
+  "title": "The sound of a city",
+  "idea": "A short radio programme exploring how places influence the music people make.",
+  "language": "English",
+  "tone": "Informative, friendly and conversational, with natural pauses.",
+  "research_notes": "",
+  "verification_notes": "Replace the example music slots with your chosen recordings. Verify any historical details you add.",
+  "entries": [
+    {
+      "id": "00000000000000000000000000000001",
+      "kind": "speech",
+      "title": "Opening",
+      "text": "Welcome. Today we are listening to the way a place can leave its mark on music.\n\nThink about the rooms where people rehearse, the venues where they meet, and the sounds they hear outside. We will follow those connections through two recordings.",
+      "notes": "",
+      "estimated_seconds": 35.0,
+      "asset_id": null,
+      "trim_start": 0.0,
+      "trim_end": null
+    },
+    {
+      "id": "00000000000000000000000000000002",
+      "kind": "music",
+      "title": "First artist and track",
+      "text": "",
+      "notes": "Choose a recording that introduces the sound of the place.",
+      "estimated_seconds": 240.0,
+      "asset_id": null,
+      "trim_start": 0.0,
+      "trim_end": null
+    },
+    {
+      "id": "00000000000000000000000000000003",
+      "kind": "speech",
+      "title": "Between recordings",
+      "text": "That was our first recording. Listen to the space around the instruments and the way the rhythm moves.\n\nThe next track gives us another perspective. As you listen, consider which details feel connected and which take us somewhere else.",
+      "notes": "",
+      "estimated_seconds": 30.0,
+      "asset_id": null,
+      "trim_start": 0.0,
+      "trim_end": null
+    },
+    {
+      "id": "00000000000000000000000000000004",
+      "kind": "music",
+      "title": "Second artist and track",
+      "text": "",
+      "notes": "Choose a contrasting recording and check the exact version.",
+      "estimated_seconds": 240.0,
+      "asset_id": null,
+      "trim_start": 0.0,
+      "trim_end": null
+    },
+    {
+      "id": "00000000000000000000000000000005",
+      "kind": "speech",
+      "title": "Closing",
+      "text": "We have heard two ways of making a place audible. You can return to those details when you listen again.\n\nThank you for spending this time with us. Until next time.",
+      "notes": "",
+      "estimated_seconds": 25.0,
+      "asset_id": null,
+      "trim_start": 0.0,
+      "trim_end": null
+    }
+  ],
+  "assets": {},
+  "jingle_id": null,
+  "settings": {
+    "duration_mode": "natural",
+    "target_seconds": 600,
+    "bed_db": -27.0,
+    "music_lufs": -16.0,
+    "speech_lufs": -17.0,
+    "true_peak_db": -1.5,
+    "crossfade_seconds": 3.0,
+    "intro_seconds": 12.0,
+    "outro_seconds": 12.0,
+    "bitrate_kbps": 192,
+    "sample_rate": 48000
+  }
+}
