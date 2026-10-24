@@ -50,6 +50,7 @@ class AudioTests(unittest.TestCase):
             self.assertEqual(report["duration_seconds"],14)
             self.assertEqual(report["bitrate_kbps"],192)
             self.assertTrue(report["cbr_verified"])
+            self.assertTrue(report["decoded_sample_count_verified"])
             self.assertTrue(report["within_peak_ceiling"])
             self.assertEqual(report["music_tracks"],2)
             self.assertEqual(report["speech_segments"],2)

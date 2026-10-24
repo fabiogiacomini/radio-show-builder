@@ -7,6 +7,7 @@ import os
 import re
 import shutil
 import subprocess
+import tempfile
 import wave
 import numpy as np
 from .model import ValidationError
@@ -201,14 +202,33 @@ def verify_mp3(path, expected_frames, rate, bitrate, ceiling):
         count += 1
     if bitrates != {bitrate}:
         raise ValidationError("The exported MP3 does not match the requested constant bitrate.")
-    # Parse progress instead of buffering an entire decoded show in memory.
-    result = run(["-i", path, "-af", "ebur128=peak=true", "-progress", "pipe:1",
-                  "-f", "null", "-"])
-    progress = result.stdout.decode(errors="replace")
-    times = re.findall(r"out_time_us=(\d+)", progress)
-    if not times or abs(int(times[-1])/1e6 - expected_frames/rate) > .06:
-        raise ValidationError("The exported audio duration did not match the assembled master.")
-    summary = result.stderr.decode(errors="replace").rsplit("Summary:", 1)[-1]
+    # Count actual decoded samples. Null-muxer progress timestamps vary between
+    # FFmpeg releases and do not reliably describe gapless MP3 playback length.
+    # A temporary stderr file also prevents a pipe deadlock on long ebur128 logs.
+    byte_count = 0
+    with tempfile.TemporaryFile() as log:
+        process = subprocess.Popen([ffmpeg(), "-nostdin", "-hide_banner", "-i", str(path),
+            "-af", "ebur128=peak=true", "-ar", str(rate), "-ac", "2", "-f", "f32le", "pipe:1"],
+            stdout=subprocess.PIPE, stderr=log)
+        try:
+            while True:
+                block = process.stdout.read(1024*1024)
+                if not block:
+                    break
+                byte_count += len(block)
+            if process.wait(timeout=14400) != 0:
+                raise ValidationError("The exported MP3 could not be decoded for verification.")
+        finally:
+            process.stdout.close()
+            if process.poll() is None:
+                process.kill()
+                process.wait()
+        log.seek(0, 2)
+        log.seek(max(0, log.tell()-16000))
+        summary = log.read().decode(errors="replace").rsplit("Summary:", 1)[-1]
+    decoded_frames = byte_count // 8
+    if byte_count % 8 or decoded_frames != expected_frames:
+        raise ValidationError(f"Export duration mismatch: expected {expected_frames} samples, decoded {decoded_frames}.")
     try:
         i = float(re.search(r"I:\s+(-?[\d.]+) LUFS", summary).group(1))
         tp = float(re.search(r"Peak:\s+(-?[\d.]+) dBFS", summary).group(1))
@@ -218,6 +238,7 @@ def verify_mp3(path, expected_frames, rate, bitrate, ceiling):
     return {"integrated_lufs": i, "true_peak_db": tp, "loudness_range_lu": lra,
             "duration_seconds": expected_frames/rate, "bitrate_kbps": bitrate,
             "sample_rate": rate, "channels": 2, "cbr_verified": True, "mpeg_frames": count,
+            "decoded_frames": decoded_frames, "decoded_sample_count_verified": True,
             "within_peak_ceiling": tp <= ceiling + .1}
 
 def render(project, directory, progress=lambda value, message: None):
