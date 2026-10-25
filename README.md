@@ -12,6 +12,17 @@ The interface and documentation are in English. Scripts can use any language sup
 
 **Status: public preview, [v0.3.0](https://github.com/fabiogiacomini/radio-show-builder/releases/tag/v0.3.0).** Portable desktop packages include Python and the audio engine. The local workflow and provider request formats are covered by automated tests. Presets are configuration starting points; not every model has been tested with a paid account.
 
+## Download the app
+
+| Computer | Direct download |
+|---|---|
+| Mac with Apple chip, macOS 15+ | [Download for Mac — Apple Silicon](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-macOS-arm64.dmg) |
+| Mac Intel, macOS 15+ | [Download for Mac — Intel](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-macOS-x64.dmg) |
+| Windows 10/11 x64 | [Download for Windows](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-Windows-x64.zip) |
+| Linux x64, glibc 2.35+ (for example Ubuntu 22.04+) | [Download for Linux](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-Linux-x64.tar.gz) |
+
+[Launch instructions and system requirements](docs/desktop-downloads.md) · [All release files and checksums](https://github.com/fabiogiacomini/radio-show-builder/releases/tag/v0.3.0)
+
 ![Radio Show Builder podcast studio](docs/images/studio.png)
 
 [![Watch the 54-second introduction](docs/images/promo-cover.jpg)](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-Promo-1080p.mp4)

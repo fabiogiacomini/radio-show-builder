@@ -11,12 +11,12 @@ Start with **Create a podcast** for a spoken-only episode with natural duration.
 
 ## Choose a download
 
-| Computer | File |
+| Computer | Direct download |
 |---|---|
-| Mac with Apple chip, macOS 15 or later | macOS-arm64.dmg |
-| Mac with Intel processor, macOS 15 or later | macOS-x64.dmg |
-| Windows 10/11, Intel or AMD 64-bit | Windows-x64.zip |
-| Linux desktop, Intel or AMD 64-bit, glibc 2.35 or later (for example Ubuntu 22.04+) | Linux-x64.tar.gz |
+| Mac with Apple chip, macOS 15+ | [Download for Mac — Apple Silicon](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-macOS-arm64.dmg) |
+| Mac Intel, macOS 15+ | [Download for Mac — Intel](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-macOS-x64.dmg) |
+| Windows 10/11 x64 | [Download for Windows](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-Windows-x64.zip) |
+| Linux x64, glibc 2.35+ (for example Ubuntu 22.04+) | [Download for Linux](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-Linux-x64.tar.gz) |
 
 These are separate architecture-specific builds, not universal binaries. Windows ARM, Linux ARM, Alpine Linux and older macOS versions are not validated by this release.
 
