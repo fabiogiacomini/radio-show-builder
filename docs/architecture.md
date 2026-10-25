@@ -1,5 +1,7 @@
 # Architecture
 
+Radio Show Builder was created by **Fabio Giacomini**. The MIT copyright notice is in the repository's LICENSE file, and the creator is identified in the package metadata and app header.
+
 Dependencies are Python, NumPy, python-docx and external FFmpeg. The plain HTML/CSS/JavaScript frontend has no build step or remote assets.
 
 | Module | Responsibility |

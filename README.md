@@ -2,11 +2,13 @@
 
 **Turn a radio-show idea and your own audio into a finished MP3.**
 
+Created by **[Fabio Giacomini](https://github.com/fabiogiacomini)**.
+
 A local, open-source production app. Draft an editable script with your choice of AI, upload spoken recordings, music and a jingle, then assemble the show with balanced levels and a quiet music bed under speech.
 
 The interface and documentation are in English. Scripts can use any language supported by the selected model.
 
-**Status: first public release, v0.1.0.** The local workflow and provider request formats are covered by automated tests. Presets are configuration starting points; not every model has been tested with a paid account.
+**Status: public preview, [v0.1.1](https://github.com/fabiogiacomini/radio-show-builder/releases/tag/v0.1.1).** The local workflow and provider request formats are covered by automated tests. Presets are configuration starting points; not every model has been tested with a paid account.
 
 ![Radio Show Builder studio](docs/images/studio.png)
 
@@ -140,4 +142,8 @@ See [Architecture](docs/architecture.md), [Contributing](CONTRIBUTING.md) and [S
 
 ## License
 
-MIT. See [LICENSE](LICENSE). This license covers the code. Audio, scripts, model services and dependencies retain their applicable terms.
+Radio Show Builder was created by **Fabio Giacomini** and is distributed under the MIT license. Copyright (c) 2026 Fabio Giacomini. See [LICENSE](LICENSE).
+
+When redistributing copies or substantial portions of this software, retain the copyright notice and MIT license. The original app also displays a visible creator credit; MIT does not require derivative applications to retain the same interface or an on-screen credit.
+
+This license covers the code. Audio, scripts, model services and dependencies retain their applicable terms.

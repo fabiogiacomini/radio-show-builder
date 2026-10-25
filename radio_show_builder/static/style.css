@@ -121,7 +121,10 @@ main {
   padding:0 58px 70px
 }
 .topbar {
-  height:78px;
+  min-height:78px;
+  padding:12px 0;
+  gap:12px;
+  flex-wrap:wrap;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -129,6 +132,16 @@ main {
   font-size:10px;
   letter-spacing:1.8px;
   color:var(--muted)
+}
+.app-meta {
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px
+}
+.creator-credit {
+  font-size:10px;
+  letter-spacing:0
 }
 .eyebrow {
   font-size:10px;
@@ -665,7 +678,7 @@ input[type=range] {
     padding:0 20px 40px
   }
   .topbar {
-    height:52px;
+    min-height:52px;
     font-size:8px
   }
   .welcome {
