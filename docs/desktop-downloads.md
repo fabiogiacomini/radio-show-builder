@@ -13,10 +13,12 @@ Start with **Create a podcast** for a spoken-only episode with natural duration.
 
 | Computer | Direct download |
 |---|---|
-| Mac with Apple chip, macOS 15+ | [Download for Mac — Apple Silicon](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-macOS-arm64.dmg) |
-| Mac Intel, macOS 15+ | [Download for Mac — Intel](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-macOS-x64.dmg) |
+| Mac with Apple chip, macOS 15+<sup>*</sup> | [Download for Mac — Apple Silicon](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-macOS-arm64.dmg) |
+| Mac Intel, macOS 15+<sup>*</sup> | [Download for Mac — Intel](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-macOS-x64.dmg) |
 | Windows 10/11 x64 | [Download for Windows](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-Windows-x64.zip) |
 | Linux x64, glibc 2.35+ (for example Ubuntu 22.04+) | [Download for Linux](https://github.com/fabiogiacomini/radio-show-builder/releases/download/v0.3.0/Radio-Show-Builder-0.3.0-Linux-x64.tar.gz) |
+
+<sub><strong>* Mac: if macOS blocks the app, go to System Settings → Privacy &amp; Security → Open Anyway, then confirm Open.</strong></sub>
 
 These are separate architecture-specific builds, not universal binaries. Windows ARM, Linux ARM, Alpine Linux and older macOS versions are not validated by this release.
 
