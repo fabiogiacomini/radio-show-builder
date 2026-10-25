@@ -4,6 +4,8 @@ Radio Show Builder was created by **Fabio Giacomini**. The MIT copyright notice 
 
 Dependencies are Python, NumPy, python-docx and external FFmpeg. The plain HTML/CSS/JavaScript frontend has no build step or remote assets.
 
+Portable packages bundle Python, dependencies and a separate minimal FFmpeg executable. Runtime paths resolve within the bundle; persistent project data remains in the user's home directory. The authenticated Quit app action refuses to shut down while a job is running. See [Desktop builds](desktop-builds.md).
+
 | Module | Responsibility |
 |---|---|
 | model.py | Validation and project records |

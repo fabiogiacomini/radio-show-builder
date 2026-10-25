@@ -238,6 +238,16 @@ for(const id of ["word-download","json-download"]) $(id).onclick=safe(async(even
   if(id==="json-download")link.download="radio-show-project.json";link.click();
 });
 window.addEventListener("beforeunload",event=>{if(dirty){event.preventDefault();event.returnValue="";}});
+$("quit-app").onclick=safe(async()=>{
+  if(busy)throw new Error("Wait for the running task to finish before quitting.");
+  if(dirty)await save();
+  await api("/api/shutdown",{method:"POST"});
+  $("quit-app").disabled=true;
+  $("editor").inert=true;
+  $("new-project").disabled=true;
+  $("start-project").disabled=true;
+  notify("Radio Show Builder has stopped. You can close this tab. Reopen the app to continue.");
+});
 (async()=>{
   try{
     const token=new URLSearchParams(location.hash.slice(1)).get("token");
@@ -246,6 +256,7 @@ window.addEventListener("beforeunload",event=>{if(dirty){event.preventDefault();
     history.replaceState(null,"",location.pathname);
     config=await api("/api/config");
     $("version").textContent="v"+config.version;
+    $("quit-app").hidden=false;
     $("provider").innerHTML=config.providers.map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join("");
     selectProvider();await projectsList();
     if(!config.ffmpeg_available)notify("FFmpeg is not installed. You can write scripts now; install FFmpeg before mixing audio.",true);

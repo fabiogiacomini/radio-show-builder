@@ -143,6 +143,14 @@ main {
   font-size:10px;
   letter-spacing:0
 }
+.quit-app {
+  font-size:10px;
+  padding:6px 10px;
+  border:1px solid var(--line);
+  border-radius:5px;
+  background:transparent;
+  color:var(--ink)
+}
 .eyebrow {
   font-size:10px;
   letter-spacing:2px;

@@ -76,3 +76,23 @@ class ServerTests(unittest.TestCase):
             self.assertEqual(self.req("PUT","/api/projects/"+p["id"],{"title":"Changed"})[0],400)
         finally:
             event.set()
+
+    def test_shutdown_requires_authentication_and_an_idle_app(self):
+        self.assertEqual(self.req("POST", "/api/shutdown", auth=False)[0], 403)
+        p = self.app.store.create("Busy shutdown test")
+        event = threading.Event()
+        self.app.job(p["id"], lambda progress: event.wait(5))
+        try:
+            self.assertEqual(self.req("POST", "/api/shutdown")[0], 400)
+            self.assertFalse(self.app.closing)
+            self.assertEqual(self.req("GET", "/api/projects")[0], 200)
+        finally:
+            event.set()
+
+    def test_idle_shutdown_stops_server_and_rejects_new_jobs(self):
+        self.assertEqual(self.req("POST", "/api/shutdown")[0], 200)
+        self.thread.join(5)
+        self.assertFalse(self.thread.is_alive())
+        from radio_show_builder.model import ValidationError
+        with self.assertRaises(ValidationError):
+            self.app.job("a" * 32, lambda progress: None)

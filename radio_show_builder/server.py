@@ -9,11 +9,11 @@ import os
 from pathlib import Path
 import re
 import secrets
+import sys
 import threading
 import time
 import urllib.parse
 import uuid
-import webbrowser
 from concurrent.futures import ThreadPoolExecutor
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -21,6 +21,7 @@ from . import __version__, audio, providers
 from .documents import export_docx
 from .model import ValidationError, identifier, update_project
 from .store import Store
+from .runtime import Instance, AlreadyRunning, open_browser, configure_frozen
 
 STATIC = Path(__file__).with_name("static")
 MAX_JSON = 2_000_000
@@ -35,11 +36,14 @@ class App(ThreadingHTTPServer):
         self.jobs = {}
         self.guard = threading.RLock()
         self.busy = set()
+        self.closing = False
         self.executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="radio-show")
         super().__init__(address, Handler)
 
     def job(self, pid, work):
         with self.guard:
+            if self.closing:
+                raise ValidationError("The app is shutting down. Reopen it to continue.")
             if pid in self.busy:
                 raise ValidationError("This project already has a running task.")
             self.busy.add(pid)
@@ -197,6 +201,14 @@ class Handler(BaseHTTPRequestHandler):
             return
         if parts == ["api", "session"] and method == "POST":
             self.json({"ok": True, "version": __version__}, cookie=True)
+            return
+        if parts == ["api", "shutdown"] and method == "POST":
+            with self.server.guard:
+                if self.server.busy:
+                    raise ValidationError("Wait for the running task to finish before quitting.")
+                self.server.closing = True
+            self.json({"ok": True})
+            threading.Thread(target=self.server.shutdown, daemon=True).start()
             return
         if parts == ["api", "config"] and method == "GET":
             try:
@@ -363,25 +375,51 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     parser = argparse.ArgumentParser(description="Run Radio Show Builder locally.")
-    parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--port", type=int, default=0 if getattr(sys, "frozen", False) else 8765)
     parser.add_argument("--data-dir", default=os.environ.get("RSB_DATA_DIR", str(Path.home()/".radio-show-builder")))
     parser.add_argument("--no-browser", action="store_true")
+    parser.add_argument("--self-test-report", metavar="PATH", help="Run offline package diagnostics and write a JSON report.")
     args = parser.parse_args()
+    args.data_dir = str(Path(args.data_dir).expanduser().resolve())
+    configure_frozen()
+    if args.self_test_report:
+        from .diagnostics import self_test
+        self_test(Path(args.self_test_report))
+        return
     try:
-        app = App(("127.0.0.1", args.port), args.data_dir)
-    except OSError as e:
-        parser.exit(1, f"Could not start the local server: {e}\n")
-    url = f"http://127.0.0.1:{app.server_port}/#token={app.token}"
-    print(f"Radio Show Builder {__version__}\nOpen: {url}\nKeep this terminal open. Press Ctrl+C to stop.", flush=True)
-    if not args.no_browser:
-        webbrowser.open(url)
-    try:
-        app.serve_forever()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        app.server_close()
-        app.executor.shutdown(wait=True, cancel_futures=True)
+        with Instance(args.data_dir) as instance:
+            try:
+                app = App(("127.0.0.1", args.port), args.data_dir)
+            except OSError as e:
+                parser.exit(1, f"Could not start the local server: {e}\n")
+            url = f"http://127.0.0.1:{app.server_port}/#token={app.token}"
+            instance.set_url(url)
+            if sys.stdout is not None:
+                print(f"Radio Show Builder {__version__}\nOpen: {url}\nUse Quit app in the browser to stop.", flush=True)
+            if not args.no_browser:
+                open_browser(url)
+            try:
+                app.serve_forever()
+            except KeyboardInterrupt:
+                pass
+            finally:
+                app.server_close()
+                app.executor.shutdown(wait=True, cancel_futures=True)
+    except AlreadyRunning:
+        url_file = Path(args.data_dir).expanduser() / "launch-url.txt"
+        for _ in range(20):
+            try:
+                url = url_file.read_text().strip()
+                if re.fullmatch(r"http://127\.0\.0\.1:\d+/#token=[A-Za-z0-9_-]+", url):
+                    if not args.no_browser:
+                        open_browser(url)
+                    if sys.stdout is not None:
+                        print("Radio Show Builder is already running. Open: " + url)
+                    return
+            except OSError:
+                pass
+            time.sleep(.1)
+        parser.exit(1, "Radio Show Builder is already starting. Try opening it again shortly.\n")
 
 if __name__ == "__main__":
     main()

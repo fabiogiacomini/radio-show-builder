@@ -5,23 +5,23 @@ import json
 import math
 import os
 import re
-import shutil
 import subprocess
 import tempfile
 import wave
 import numpy as np
 from .model import ValidationError
+from .runtime import ffmpeg_path, process_options
 
 def ffmpeg():
-    executable = os.environ.get("RSB_FFMPEG") or shutil.which("ffmpeg")
-    if not executable or not Path(executable).is_file():
+    executable = ffmpeg_path()
+    if not executable or not executable.is_file():
         raise ValidationError("FFmpeg is missing. Install it and restart the app, or set RSB_FFMPEG.")
     return str(executable)
 
 def run(args, timeout=14400):
     try:
         return subprocess.run([ffmpeg(), "-nostdin", "-hide_banner", *map(str, args)],
-                              capture_output=True, check=True, timeout=timeout)
+                              capture_output=True, check=True, timeout=timeout, **process_options())
     except subprocess.CalledProcessError:
         raise ValidationError("FFmpeg could not process this audio. Check that the file is playable and the trim points are valid.") from None
     except subprocess.TimeoutExpired:
@@ -30,7 +30,7 @@ def run(args, timeout=14400):
 def probe(path):
     try:
         result = subprocess.run([ffmpeg(), "-nostdin", "-hide_banner", "-protocol_whitelist", "file,pipe",
-                                 "-i", str(path)], capture_output=True, timeout=30)
+                                 "-i", str(path)], capture_output=True, timeout=30, **process_options())
     except subprocess.TimeoutExpired:
         raise ValidationError("Audio inspection timed out.") from None
     raw = result.stderr.decode(errors="replace")
@@ -209,7 +209,7 @@ def verify_mp3(path, expected_frames, rate, bitrate, ceiling):
     with tempfile.TemporaryFile() as log:
         process = subprocess.Popen([ffmpeg(), "-nostdin", "-hide_banner", "-i", str(path),
             "-af", "ebur128=peak=true", "-ar", str(rate), "-ac", "2", "-f", "f32le", "pipe:1"],
-            stdout=subprocess.PIPE, stderr=log)
+            stdout=subprocess.PIPE, stderr=log, **process_options())
         try:
             while True:
                 block = process.stdout.read(1024*1024)

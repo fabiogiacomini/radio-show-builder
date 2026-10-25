@@ -44,7 +44,7 @@ To transfer a complete production, stop the app and copy its project directory f
 
 ## Troubleshooting
 
-- **FFmpeg missing:** install it, add it to PATH and restart. RSB_FFMPEG can specify its full executable path.
+- **FFmpeg missing:** portable packages include it; extract the entire package and keep supporting folders with the executable. For source installations, install FFmpeg, add it to PATH and restart. RSB_FFMPEG can specify its full executable path.
 - **Launch URL required:** open the URL printed by the current app process. Each launch has a new private session.
 - **Port occupied:** use --port 8766 or another available local port.
 - **No model catalogue:** enter the model ID manually.

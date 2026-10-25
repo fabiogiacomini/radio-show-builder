@@ -8,7 +8,7 @@ A local, open-source production app. Draft an editable script with your choice o
 
 The interface and documentation are in English. Scripts can use any language supported by the selected model.
 
-**Status: public preview, [v0.1.1](https://github.com/fabiogiacomini/radio-show-builder/releases/tag/v0.1.1).** The local workflow and provider request formats are covered by automated tests. Presets are configuration starting points; not every model has been tested with a paid account.
+**Status: public preview, [v0.2.0](https://github.com/fabiogiacomini/radio-show-builder/releases/tag/v0.2.0).** Portable desktop packages include Python and the audio engine. The local workflow and provider request formats are covered by automated tests. Presets are configuration starting points; not every model has been tested with a paid account.
 
 ![Radio Show Builder studio](docs/images/studio.png)
 
@@ -29,6 +29,14 @@ The interface and documentation are in English. Scripts can use any language sup
 Original recordings remain unchanged. This app does not download music, clone voices or generate spoken audio.
 
 ## Install and run
+
+### Download a portable app
+
+Choose your computer on the [Downloads page](https://github.com/fabiogiacomini/radio-show-builder/releases/tag/v0.2.0): **Mac with Apple chip**, **Mac Intel**, **Windows x64** or **Linux x64**. Python and FFmpeg are included. Extract or install the package, open Radio Show Builder, and use it in your browser. Use **Quit app** when finished.
+
+These first builds are not Apple notarized or Windows publisher signed. See [platform requirements, launch instructions and checksums](docs/desktop-downloads.md). They are portable packages, not app-store installations. The app's own code is MIT licensed; bundled third-party components have separate licenses. Exact corresponding FFmpeg and LAME sources are included with the release.
+
+### Run from source
 
 You need **Python 3.10 or later** and **FFmpeg** with the libmp3lame encoder.
 
@@ -59,7 +67,7 @@ python -m pip install .
 radio-show-builder
 ~~~
 
-The app opens a private local URL in your browser. Keep the terminal and computer running while building a show. Press Ctrl+C to stop after the current task completes.
+The app opens a private local URL in your browser. Keep the computer running while building a show. Use Quit app to stop, or press Ctrl+C in the source version's terminal after the current task completes.
 
 ~~~sh
 radio-show-builder --port 8766 --data-dir ./my-local-shows
@@ -139,6 +147,8 @@ python -m unittest discover -s tests -v
 Tests use generated signals and mock provider servers, never private recordings or paid API calls. Install FFmpeg for audio integration tests.
 
 See [Architecture](docs/architecture.md), [Contributing](CONTRIBUTING.md) and [Security](SECURITY.md).
+
+For native build steps, license notices and release checks, see [Desktop builds](docs/desktop-builds.md).
 
 ## License
 
