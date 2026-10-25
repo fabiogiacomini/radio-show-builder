@@ -89,6 +89,8 @@ def build(target):
     if not result["ok"]:
         raise RuntimeError("Frozen executable failed the package diagnostics.")
     stage = ROOT / "build" / f"portable-{target}"
+    if stage.exists():
+        shutil.rmtree(stage)
     stage.mkdir(parents=True, exist_ok=True)
     shutil.copytree(content, stage / content.name, symlinks=True, dirs_exist_ok=True)
     shutil.copy2(ROOT / "LICENSE", stage / "LICENSE.txt")

@@ -225,7 +225,8 @@ class Handler(BaseHTTPRequestHandler):
             if method == "GET":
                 self.json({"projects": self.server.store.list()})
             elif method == "POST":
-                self.json(self.server.store.create(self.data().get("title", "Untitled show")), 201)
+                data = self.data()
+                self.json(self.server.store.create(data.get("title"), data.get("preset", "podcast")), 201)
             else:
                 self.json({"error": "Method not allowed."}, 405)
             return
@@ -288,7 +289,7 @@ class Handler(BaseHTTPRequestHandler):
                     raise ValidationError("Confirm replacing the current draft before generating again.")
                 def work(progress):
                     progress(.1, "Writing the draft with your selected AI")
-                    draft = providers.generate(p, data.get("provider", {}), data.get("music_percent", 83))
+                    draft = providers.generate(p, data.get("provider", {}), data.get("music_percent"))
                     with self.server.store.lock(pid):
                         updated = self.server.store.load(pid)
                         updated.update(draft)

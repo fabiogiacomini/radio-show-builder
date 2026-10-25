@@ -78,5 +78,7 @@
     "outro_seconds": 12.0,
     "bitrate_kbps": 192,
     "sample_rate": 48000
-  }
+  },
+  "preset": "radio",
+  "music_percent": 83
 }

@@ -11,36 +11,39 @@
   <aside class="sidebar">
     <a class="brand" href="/" aria-label="Radio Show Builder home"><span class="brand-mark" aria-hidden="true">≋</span><span>Radio Show<br><strong>Builder</strong></span></a>
     <p class="sidebar-caption">YOUR STUDIO</p>
-    <button id="new-project" class="button light wide">＋ New show</button>
-    <div id="project-list" class="project-list" aria-label="Saved shows"></div>
+    <label class="preset-label">New project preset<select id="new-preset"><option value="podcast">Podcast</option><option value="radio">Radio show</option></select></label>
+    <button id="new-project" class="button light wide">＋ New podcast</button>
+    <div id="project-list" class="project-list" aria-label="Saved episodes and shows"></div>
     <footer><span class="status-dot"></span> Runs on your computer<br><small>Open source · MIT license</small></footer>
   </aside>
   <main>
-    <header class="topbar"><span>THE INDEPENDENT RADIO TOOLKIT</span><span class="app-meta"><span class="creator-credit">Created by <a href="https://github.com/fabiogiacomini" target="_blank" rel="noopener noreferrer">Fabio Giacomini</a></span><span id="version">v0.2.0</span><button id="quit-app" class="quit-app" hidden>Quit app</button></span></header>
+    <header class="topbar"><span>THE INDEPENDENT TOOLKIT FOR PODCASTS AND RADIO</span><span class="app-meta"><span class="creator-credit">Created by <a href="https://github.com/fabiogiacomini" target="_blank" rel="noopener noreferrer">Fabio Giacomini</a></span><span id="version">v0.3.0</span><button id="quit-app" class="quit-app" hidden>Quit app</button></span></header>
     <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
     <section id="welcome" class="welcome">
-      <div class="eyebrow">FROM AN IDEA TO ON AIR</div>
+      <div class="eyebrow">FOR INDEPENDENT PODCASTERS AND RADIO MAKERS</div>
       <h1>Make room<br>for your sound.</h1>
-      <p>Write the story. Bring your recordings.<br>Build a show that sounds like you.</p>
-      <button id="start-project" class="button primary">Create your first show <span aria-hidden="true">↗</span></button>
-      <div class="welcome-steps"><div><b>01</b><h2>Plan the show</h2><p>Choose your AI or write your own script.</p></div><div><b>02</b><h2>Bring the audio</h2><p>Upload speech, music and your jingle.</p></div><div><b>03</b><h2>Make the mix</h2><p>Balance the sound and export your MP3.</p></div></div>
+      <p>Plan your podcast. Bring your recordings.<br>Build an episode that sounds like you.</p>
+      <div class="actions welcome-actions"><button id="start-project" class="button primary">Create a podcast <span aria-hidden="true">↗</span></button><button id="start-radio" class="button light">Create a radio show</button></div>
+      <p class="welcome-note">Free and open source · Mac, Windows and Linux · Music is optional</p>
+      <div class="welcome-steps"><div><b>01</b><h2>Plan the episode</h2><p>Choose your AI or write your own script.</p></div><div><b>02</b><h2>Bring the audio</h2><p>Upload your recordings. Add music or a jingle if you want.</p></div><div><b>03</b><h2>Make the mix</h2><p>Balance the sound and export your MP3.</p></div></div>
     </section>
     <section id="editor" hidden>
-      <div class="show-heading"><div><div class="eyebrow">IN THE STUDIO</div><h1 id="show-name">Untitled show</h1></div><button id="save" class="button light">Save changes</button></div>
+      <div class="show-heading"><div><div class="eyebrow">IN THE STUDIO</div><h1 id="show-name">Untitled episode</h1></div><button id="save" class="button light">Save changes</button></div>
       <nav class="tabs" aria-label="Production steps">
         <button data-step="idea" class="active">01 <span>Idea & script</span></button>
         <button data-step="rundown">02 <span>Rundown & audio</span></button>
         <button data-step="export">03 <span>Mix & export</span></button>
       </nav>
       <section id="step-idea" class="step">
-        <div class="section-title"><h2>What is your show about?</h2><p>A subject, a story, a scene. Start with something you want to share.</p></div>
-        <label>Show title<input id="title" maxlength="200" placeholder="Give your show a name"></label>
-        <label>The idea<textarea id="idea" rows="4" placeholder="Describe the subject, audience and musical direction…"></textarea></label>
+        <div class="section-title"><h2>What is your episode about?</h2><p>A subject, a story, a scene. Start with something you want to share.</p></div>
+        <label>Episode / show title<input id="title" maxlength="200" placeholder="Give your episode or show a name"></label>
+        <label>The idea<textarea id="idea" rows="4" placeholder="Describe the subject, audience and what you want listeners to take away…"></textarea></label>
         <div class="grid three">
-          <label>Target duration · minutes<input id="duration" type="number" min=".016667" max="240" step="any" value="90"></label>
+          <label>Target duration · minutes<input id="duration" type="number" min=".016667" max="240" step="any" value="30"></label>
           <label>Script language<input id="language" value="English" list="languages"><datalist id="languages"><option>English</option><option>Italian</option><option>Spanish</option><option>French</option><option>German</option><option>Portuguese</option><option>Japanese</option></datalist></label>
-          <label>Music share · %<input id="music-percent" type="number" min="0" max="100" value="83"></label>
+          <label>Music in the draft · %<input id="music-percent" type="number" min="0" max="100" value="0"></label>
         </div>
+        <p class="help">The duration guides the script. Podcast exports keep their natural length by default. Set music to 0% for a spoken-only episode.</p>
         <label>Spoken tone<input id="tone" placeholder="Informative, friendly and conversational"></label>
         <details><summary>Research notes and references</summary><label>Facts, context and source links<textarea id="research-notes" rows="5" placeholder="Add information the AI should work from. Review factual claims before recording."></textarea></label></details>
         <div class="section-title spaced"><h2>Your choice of AI</h2><p>Bring your own key, or connect a model running on your computer.</p></div>
@@ -53,12 +56,12 @@
         <div class="section-title"><h2>Your running order</h2><p>Review every word, then attach the recordings you want to hear.</p></div>
         <div class="rundown-tools"><a id="word-download" class="button light">Download Word script ↓</a><a id="json-download" class="button text" download="radio-show-project.json">Export rundown JSON</a></div>
         <details id="checks-section" hidden><summary>Editorial checks from the draft</summary><textarea id="verification-notes" rows="5"></textarea></details>
-        <div class="jingle-row"><div><h3>Show jingle</h3><p>Opening, closing and a quiet bed under speech.</p></div><label class="button light file-label">Upload jingle<input id="jingle-upload" type="file" accept="audio/*" hidden></label><select id="jingle-select" aria-label="Jingle audio"><option value="">No jingle</option></select></div>
+        <div class="jingle-row"><div><h3>Optional jingle</h3><p>Use it for opening, closing and a quiet speech bed, or leave it out.</p></div><label class="button light file-label">Upload jingle<input id="jingle-upload" type="file" accept="audio/*" hidden></label><select id="jingle-select" aria-label="Jingle audio"><option value="">No jingle</option></select></div>
         <div id="segments"></div>
         <div class="actions"><button id="add-speech" class="button light">＋ Spoken segment</button><button id="add-music" class="button light">＋ Music track</button><button id="go-export" class="button primary push-right">Set up the mix →</button></div>
       </section>
       <section id="step-export" class="step" hidden>
-        <div class="section-title"><h2>Bring it all together.</h2><p>Keep the voice clear and the music consistent.</p></div>
+        <div class="section-title"><h2>Bring it all together.</h2><p>Keep voices clear and levels balanced. Music is optional.</p></div>
         <div class="grid two">
           <label>Duration<select id="duration-mode"><option value="exact">Match the target duration</option><option value="natural">Keep the natural duration</option></select></label>
           <label>MP3 bitrate<select id="bitrate"><option>128</option><option selected>192</option><option>256</option><option>320</option></select><small>kbps · constant bitrate · stereo</small></label>
@@ -70,9 +73,9 @@
         <label class="range-label">Background music under speech <output id="bed-value">−27 dB</output><input id="bed" type="range" min="-50" max="-12" step="1" value="-27"><span class="range-hints"><small>Quieter</small><small>More present</small></span></label>
         <details><summary>Loudness settings</summary><div class="grid three"><label>Music · LUFS<input id="music-lufs" type="number" min="-24" max="-12" step=".5"></label><label>Speech · LUFS<input id="speech-lufs" type="number" min="-24" max="-12" step=".5"></label><label>True peak ceiling · dBTP<input id="true-peak" type="number" min="-6" max="-1" step=".5"></label></div><p class="help">Every file is normalised before mixing. The complete mix receives a global loudness adjustment and peak limiting. The encoded MP3 is checked before it is offered for download.</p></details>
         <div id="timing" class="timing"><span>Upload your audio to check the running time.</span></div>
-        <p class="help">Exact duration adds up to two minutes of extra jingle at the end when needed. If the show is too long, choose your own trim points or remove a segment. Speech is never accelerated or shortened automatically.</p>
+        <p class="help">Exact duration adds up to two minutes of extra jingle at the end when needed. If the episode or show is too long, choose your own trim points or remove a segment. Speech is never accelerated or shortened automatically.</p>
         <div class="actions"><button id="check-timing" class="button light">Check duration</button><button id="render" class="button primary">Build the MP3 <span aria-hidden="true">↗</span></button></div>
-        <div id="delivery" class="delivery" hidden><div class="eyebrow">READY TO LISTEN</div><h2>Your show is ready.</h2><p id="export-details"></p><audio id="final-audio" controls preload="metadata"></audio><div class="actions"><a id="mp3-download" class="button primary" download="show.mp3">Download MP3 ↓</a><a id="rundown-download" class="button light">Final rundown</a><a id="report-download" class="button text">Technical report</a></div></div>
+        <div id="delivery" class="delivery" hidden><div class="eyebrow">READY TO LISTEN</div><h2>Your episode is ready.</h2><p id="export-details"></p><audio id="final-audio" controls preload="metadata"></audio><div class="actions"><a id="mp3-download" class="button primary" download="show.mp3">Download MP3 ↓</a><a id="rundown-download" class="button light">Final rundown</a><a id="report-download" class="button text">Technical report</a></div></div>
       </section>
       <div id="job" class="job" role="status" aria-live="polite" hidden><div><span class="spinner"></span><strong id="job-message">Working…</strong></div><progress id="job-progress" max="1" value="0"></progress><small>You can leave this tab open. Keep the app and computer running.</small></div>
     </section>

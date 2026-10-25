@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "radio-show-builder"
-version = "0.2.0"
-description = "Plan a radio show with your choice of AI, then assemble your own audio into a finished MP3."
+version = "0.3.0"
+description = "A free, open-source toolkit for podcasts and radio: plan an episode and mix your recordings into a balanced MP3."
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}

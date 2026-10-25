@@ -39,6 +39,12 @@ The default data folder is .radio-show-builder in the user's home. Use RSB_DATA_
 
 Audio uses random filenames. Original names stay in private project records. Cache keys include source hashes, trim points and processing settings.
 
+## Project presets and compatibility
+
+New projects default to the podcast preset: natural duration, a 30-minute editorial goal and zero music share. The radio preset retains the earlier 90-minute exact-duration and 83% music-share starting point. The preset and music percentage are portable project fields; presets are never reapplied when loading a project. Partial settings updates merge with the saved settings, so a bitrate change cannot reset a podcast to radio timing.
+
+Schema version 1 remains readable. Projects without preset/music fields retain their settings and use the legacy radio brief when generating a new draft. Imported rundowns are validated, and audio assignments are cleared for reattachment.
+
 ## Access and credentials
 
 The server binds to 127.0.0.1. A launch token becomes an HttpOnly, SameSite=Strict cookie; the token is removed from the address bar after exchange. Host and Origin checks restrict access to the local app.

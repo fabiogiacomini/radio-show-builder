@@ -51,7 +51,7 @@ def self_test(report_path):
                 assert request("GET", "/api/projects", auth=False)[0] == 403
                 config = api("GET", "/api/config")
                 assert config["ffmpeg_available"] and config["version"] == __version__
-                project = api("POST", "/api/projects", {"title": "Offline package check"})
+                project = api("POST", "/api/projects", {"title": "Offline package check", "preset": "radio"})
                 base = "/api/projects/" + project["id"]
                 sources, segments = {}, []
                 for index, (kind, duration, frequency) in enumerate([("speech", 2, 220), ("music", 3, 440), ("music", 3, 660), ("speech", 2, 250), ("jingle", 4, 110)]):

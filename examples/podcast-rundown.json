@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "id": "f74c5772e798448889ebe0b5e2b8189a",
+  "title": "Independent Voices — Episode 1",
+  "idea": "A short spoken-only podcast about starting an independent creative project.",
+  "language": "English",
+  "tone": "Informative, friendly and conversational, with natural pauses.",
+  "research_notes": "",
+  "verification_notes": "This is an editable example, not researched reporting. Replace placeholders with your own observations and verify any factual claims you add.",
+  "entries": [
+    {
+      "id": "054a3c86e9864e89ad3cf64f3e4d1ed7",
+      "kind": "speech",
+      "title": "Opening",
+      "text": "Welcome to Independent Voices. Today we are looking at the first small decisions behind an independent creative project.\n\nWhat do you want to make, and who do you want to share it with?",
+      "notes": "",
+      "estimated_seconds": 25.0,
+      "asset_id": null,
+      "trim_start": 0.0,
+      "trim_end": null
+    },
+    {
+      "id": "af8b2cd170df47c09cd9931dc46c9a0f",
+      "kind": "speech",
+      "title": "Main story",
+      "text": "Start with one clear idea. A small project gives you room to try something, listen to the response, and decide what to change.\n\nIn this section, add your own example or interview recording. Explain what happened, what you learned, and what you would do next.",
+      "notes": "Replace this script with your own story. Add more spoken segments if needed.",
+      "estimated_seconds": 45.0,
+      "asset_id": null,
+      "trim_start": 0.0,
+      "trim_end": null
+    },
+    {
+      "id": "16ffd6018761447385d3eedc9035b287",
+      "kind": "speech",
+      "title": "Closing",
+      "text": "Choose one step you can take this week. It could be recording a conversation, writing a page, or sharing a first draft.\n\nThank you for listening. We will pick up the conversation next time.",
+      "notes": "",
+      "estimated_seconds": 25.0,
+      "asset_id": null,
+      "trim_start": 0.0,
+      "trim_end": null
+    }
+  ],
+  "assets": {},
+  "jingle_id": null,
+  "settings": {
+    "duration_mode": "exact",
+    "target_seconds": 180,
+    "bed_db": -27.0,
+    "music_lufs": -16.0,
+    "speech_lufs": -17.0,
+    "true_peak_db": -1.5,
+    "crossfade_seconds": 3.0,
+    "intro_seconds": 12.0,
+    "outro_seconds": 12.0,
+    "bitrate_kbps": 192,
+    "sample_rate": 48000
+  }
+}

@@ -10,6 +10,28 @@ from radio_show_builder.documents import export_docx
 from docx import Document
 
 class CoreTests(unittest.TestCase):
+    def test_presets_and_partial_updates_preserve_editor_choices(self):
+        podcast = new_project()
+        self.assertEqual((podcast["preset"], podcast["music_percent"], podcast["settings"]["duration_mode"]),
+                         ("podcast", 0, "natural"))
+        self.assertEqual(podcast["settings"]["target_seconds"], 1800)
+        radio = new_project(preset="radio")
+        self.assertEqual((radio["music_percent"], radio["settings"]["duration_mode"],
+                          radio["settings"]["target_seconds"]), (83, "exact", 5400))
+        updated = update_project(podcast, {"settings": {"bitrate_kbps": 256}, "music_percent": 12})
+        self.assertEqual(updated["settings"]["duration_mode"], "natural")
+        self.assertEqual(updated["settings"]["target_seconds"], 1800)
+        self.assertEqual(updated["music_percent"], 12)
+        legacy = dict(radio)
+        del legacy["preset"], legacy["music_percent"]
+        self.assertEqual(update_project(legacy, {"title": "Still on air"})["settings"], radio["settings"])
+        for value in (-1, 101, True, None, "bad", float("nan")):
+            with self.subTest(value=value), self.assertRaises(ValidationError):
+                update_project(podcast, {"music_percent": value})
+        for value in ("invalid", [], None):
+            with self.subTest(value=value), self.assertRaises(ValidationError):
+                new_project(preset=value)
+
     def test_nonfinite_settings_and_invalid_trims_are_rejected(self):
         for value in (float("nan"), float("inf"), -1):
             with self.assertRaises(ValidationError):
@@ -82,11 +104,24 @@ class ProviderTests(unittest.TestCase):
                 url, headers, body = call.call_args.args
                 self.assertTrue(url.endswith({"chat":"/chat/completions","responses":"/responses","anthropic":"/messages"}[protocol]))
                 self.assertEqual(body["model"], "example-model")
+                brief = json.loads(body["input"] if protocol == "responses" else body["messages"][-1]["content"])
+                self.assertEqual((brief["format"], brief["music_percent"], brief["duration_mode"]),
+                                 ("podcast", 0, "natural"))
                 if protocol=="anthropic":
                     self.assertEqual(headers["x-api-key"], "not-a-real-key")
                 else:
                     self.assertEqual(headers["Authorization"], "Bearer not-a-real-key")
                 self.assertNotIn("api_key", result)
+
+    def test_legacy_radio_brief_keeps_music_and_timing(self):
+        p = new_project(preset="radio")
+        del p["preset"], p["music_percent"]
+        response = {"output_text": json.dumps(self.draft())}
+        with patch.object(providers, "request_json", return_value=response) as call:
+            providers.generate(p, {"provider": "openai", "model": "example-model"})
+            brief = json.loads(call.call_args.args[2]["input"])
+            self.assertEqual((brief["format"], brief["music_percent"], brief["duration_minutes"]),
+                             ("radio", 83, 90))
 
     def test_endpoint_credentials_and_insecure_remote_urls_rejected(self):
         for url in ("http://remote.example/v1","https://key@example.com/v1","https://example.com/v1?key=abc","file:///etc/passwd"):

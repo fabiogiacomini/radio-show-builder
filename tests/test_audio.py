@@ -27,7 +27,7 @@ class AudioTests(unittest.TestCase):
             raise unittest.SkipTest("Install FFmpeg to run audio integration tests.")
 
     def project(self, root):
-        p=new_project("A generated signal test")
+        p=new_project("A generated signal test", preset="radio")
         p["settings"].update(target_seconds=14,intro_seconds=1,outro_seconds=1,crossfade_seconds=.5)
         folder=Path(root);(folder/"assets").mkdir()
         ids=[]
@@ -73,7 +73,7 @@ class AudioTests(unittest.TestCase):
             self.assertEqual(report["sample_rate"],44100)
 
     def test_overlong_exact_rundown_requires_editor_decision(self):
-        p=new_project()
+        p=new_project(preset="radio")
         p["settings"].update(target_seconds=10,intro_seconds=0,outro_seconds=0)
         p["entries"]=entries([{"kind":"music","title":"Long track"}])
         plan=audio.timing(p,{p["entries"][0]["id"]:20*48000},precise=True)
@@ -85,3 +85,17 @@ class AudioTests(unittest.TestCase):
             p["entries"][0]["trim_end"]=20
             with self.assertRaises(ValidationError):
                 audio.analyse(p)
+
+    def test_spoken_only_podcast_needs_no_jingle_or_music(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = self.project(tmp)
+            defaults = new_project()["settings"]
+            p.update(preset="podcast", music_percent=0, settings=defaults, jingle_id=None)
+            p["entries"] = [e for e in p["entries"] if e["kind"] == "speech"]
+            report = audio.render(p, Path(tmp))
+            self.assertEqual(report["duration_seconds"], 4)
+            self.assertEqual(report["music_tracks"], 0)
+            self.assertEqual(report["speech_segments"], 2)
+            self.assertTrue(report["cbr_verified"])
+            self.assertTrue(report["within_peak_ceiling"])
+            self.assertTrue(all(e["kind"] == "speech" for e in report["timeline"]))

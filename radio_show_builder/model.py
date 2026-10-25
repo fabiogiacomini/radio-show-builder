@@ -12,6 +12,12 @@ DEFAULT_SETTINGS = {
     "bed_db": -27.0, "crossfade_seconds": 3.0,
     "intro_seconds": 12.0, "outro_seconds": 12.0,
 }
+PROJECT_PRESETS = {
+    "podcast": {"title": "Untitled episode", "music_percent": 0,
+                "settings": {"duration_mode": "natural", "target_seconds": 1800,
+                             "crossfade_seconds": 0, "intro_seconds": 5, "outro_seconds": 5}},
+    "radio": {"title": "Untitled show", "music_percent": 83, "settings": {}},
+}
 
 class ValidationError(ValueError):
     pass
@@ -94,19 +100,30 @@ def entries(value, assets=None):
         })
     return result
 
-def new_project(title="Untitled show"):
+def new_project(title=None, preset="podcast"):
+    if not isinstance(preset, str) or preset not in PROJECT_PRESETS:
+        raise ValidationError("Choose the podcast or radio preset.")
+    defaults = PROJECT_PRESETS[preset]
     return {
-        "schema_version": 1, "id": uuid.uuid4().hex, "title": text(title, 200),
+        "schema_version": 1, "id": uuid.uuid4().hex,
+        "title": text(defaults["title"] if title is None else title, 200),
+        "preset": preset, "music_percent": defaults["music_percent"],
         "idea": "", "language": "English",
         "tone": "Informative, friendly and conversational, with natural pauses.",
         "research_notes": "", "verification_notes": "",
-        "entries": [], "assets": {}, "jingle_id": None, "settings": settings(),
+        "entries": [], "assets": {}, "jingle_id": None, "settings": settings(defaults["settings"]),
     }
 
 def update_project(current, patch):
     if not isinstance(patch, dict):
         raise ValidationError("A project must be an object.")
     out = dict(current)
+    if "preset" in patch:
+        if not isinstance(patch["preset"], str) or patch["preset"] not in PROJECT_PRESETS:
+            raise ValidationError("Choose the podcast or radio preset.")
+        out["preset"] = patch["preset"]
+    if "music_percent" in patch:
+        out["music_percent"] = number(patch["music_percent"], 0, 100, "Music percentage")
     for key, limit in [("title", 200), ("idea", 10000), ("language", 100),
                        ("tone", 2000), ("research_notes", 30000), ("verification_notes", 10000)]:
         if key in patch:
@@ -114,7 +131,9 @@ def update_project(current, patch):
     if "entries" in patch:
         out["entries"] = entries(patch["entries"], current["assets"])
     if "settings" in patch:
-        out["settings"] = settings(patch["settings"])
+        if not isinstance(patch["settings"], dict):
+            raise ValidationError("Settings must be an object.")
+        out["settings"] = settings({**current["settings"], **patch["settings"]})
     if "jingle_id" in patch:
         aid = patch["jingle_id"] or None
         if aid and identifier(aid) not in current["assets"]:

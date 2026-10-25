@@ -23,7 +23,7 @@ def export_docx(project, destination):
     for border in doc.styles.element.xpath(".//w:pBdr"):
         border.getparent().remove(border)
     heading = re.sub(r"[^\w\s]", " ", project["title"], flags=re.UNICODE)
-    doc.add_paragraph(" ".join(heading.split()) or "Radio show script", "Title")
+    doc.add_paragraph(" ".join(heading.split()) or "Episode script", "Title")
     doc.add_paragraph(
         f"Target: {project['settings']['target_seconds']/60:g} minutes. "
         f"Language: {project['language']}. Export: {project['settings']['bitrate_kbps']} kbps MP3."
@@ -65,7 +65,7 @@ def export_docx(project, destination):
                     run.bold = True
     repeat = OxmlElement("w:tblHeader")
     table.rows[0]._tr.get_or_add_trPr().append(repeat)
-    doc.add_paragraph("Spoken script and music notes", "Heading 1")
+    doc.add_paragraph("Spoken script and production notes", "Heading 1")
     for i, e in enumerate(project["entries"], 1):
         clean = " ".join(re.sub(r"[^\w\s]", " ", e["title"], flags=re.UNICODE).split())
         doc.add_paragraph(f"{i} {e['kind'].title()} {clean}", "Heading 2")

@@ -36,8 +36,8 @@ class Store:
             temp.write_text(json.dumps(project, ensure_ascii=False, indent=2), encoding="utf-8")
             temp.replace(path / "project.json")
 
-    def create(self, title):
-        p = new_project(title)
+    def create(self, title=None, preset="podcast"):
+        p = new_project(title, preset)
         self.save(p)
         return p
 

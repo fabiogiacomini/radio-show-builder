@@ -761,3 +761,8 @@ input[type=range] {
     animation:none
   }
 }
+
+.preset-label {margin-bottom:12px;font-size:11px;color:var(--muted)}
+.welcome .welcome-note {font-size:12px;margin:14px 0 0}
+.welcome-actions {margin:0}
+@media(max-width:700px) {.preset-label {margin:18px 0 0;max-width:220px}.welcome-steps {grid-template-columns:1fr}.welcome-steps h2 {margin-top:8px}.welcome-steps p {max-width:none}}

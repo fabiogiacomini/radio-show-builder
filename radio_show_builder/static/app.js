@@ -45,6 +45,7 @@ function fillProject() {
   const settingsFields={"duration-mode":"duration_mode","bitrate":"bitrate_kbps","sample-rate":"sample_rate","crossfade":"crossfade_seconds","intro":"intro_seconds","outro":"outro_seconds","bed":"bed_db","music-lufs":"music_lufs","speech-lufs":"speech_lufs","true-peak":"true_peak_db"};
   for(const [id,key] of Object.entries(settingsFields)) $(id).value=s[key];
   $("duration").value=s.target_seconds/60;
+  $("music-percent").value=project.music_percent??83;
   $("bed-value").textContent=s.bed_db+" dB";
   $("checks-section").hidden=!project.verification_notes;
   $("jingle-select").innerHTML=assetOptions(project.jingle_id,"No jingle");
@@ -58,6 +59,7 @@ function capture() {
   for(const [id,key] of Object.entries(fields)) project.settings[key]=Number($(id).value);
   project.settings.target_seconds=Number($("duration").value)*60;
   project.settings.duration_mode=$("duration-mode").value;
+  project.music_percent=Number($("music-percent").value);
   project.jingle_id=$("jingle-select").value||null;
   document.querySelectorAll(".segment").forEach((node)=>{
     const e=project.entries.find((e)=>e.id===node.dataset.id);
@@ -83,7 +85,7 @@ function renderSegments() {
   $("segments").innerHTML=project.entries.map((e,i)=>{
     const a=project.assets[e.asset_id];
     return '<article class="segment" data-id="'+e.id+'"><div class="segment-top"><span class="number">'+String(i+1).padStart(2,"0")+'</span><span class="kind '+e.kind+'">'+e.kind.toUpperCase()+'</span><input data-field="title" aria-label="Segment title" value="'+esc(e.title)+'"><div class="controls"><button class="icon-button" data-action="up" aria-label="Move segment up" '+(i===0?"disabled":"")+'>↑</button><button class="icon-button" data-action="down" aria-label="Move segment down" '+(i===project.entries.length-1?"disabled":"")+'>↓</button><button class="icon-button" data-action="remove" aria-label="Remove segment">×</button></div></div>'+
-    (e.kind==="speech"?'<textarea data-field="text" aria-label="Spoken script" rows="5" placeholder="Write the full spoken script…">'+esc(e.text)+'</textarea>':'<p class="help">'+esc(e.notes||"Upload the exact track version you want to broadcast.")+'</p>')+
+    (e.kind==="speech"?'<textarea data-field="text" aria-label="Spoken script" rows="5" placeholder="Write the full spoken script…">'+esc(e.text)+'</textarea>':'<p class="help">'+esc(e.notes||"Upload the exact track version you want to include.")+'</p>')+
     '<div class="audio-row"><label class="button light small file-label">'+(a?"Replace audio":"Upload audio")+'<input type="file" data-upload="'+e.id+'" accept="audio/*" hidden></label><select data-field="asset_id" aria-label="Assigned audio file">'+assetOptions(e.asset_id)+'</select><span>'+(a?seconds(a.duration_seconds):"No audio yet")+'</span>'+(a?'<audio controls preload="none" src="'+projectURL("/assets/"+a.id)+'"></audio>':"")+'</div>'+
     '<details><summary>Notes, duration and trim points</summary><label>Production notes<textarea data-field="notes" rows="2">'+esc(e.notes)+'</textarea></label><div class="grid three"><label>Estimate · seconds<input data-field="estimated_seconds" type="number" min=".01" step="any" value="'+e.estimated_seconds+'"></label><label>Start at · seconds<input data-field="trim_start" type="number" min="0" step=".01" value="'+e.trim_start+'"></label><label>End at · seconds<input data-field="trim_end" type="number" min="0" step=".01" value="'+(e.trim_end??"")+'" placeholder="End of file"></label></div><p class="help">Trim points apply only to this segment. The original upload is kept intact.</p></details></article>';
   }).join("");
@@ -104,7 +106,7 @@ function selectProvider() {
 function lockUI(value) {
   busy=value;
   $("editor").inert=value;
-  $("new-project").disabled=value;
+  for(const id of ["new-project","new-preset","start-project","start-radio"]) $(id).disabled=value;
   document.querySelectorAll(".project-item").forEach(b=>b.disabled=value);
   // The job status stays readable even while the editor is inert.
 }
@@ -158,25 +160,28 @@ async function timing() {
 async function refreshTiming() {
   const result=await api(projectURL("/analyse"));
   const difference=result.difference_seconds;
-  $("timing").innerHTML='<strong>'+seconds(result.base_seconds)+'</strong><span>'+(result.missing.length?"Planning estimate · "+result.missing.length+" segment(s) still need audio.":Math.abs(difference).toFixed(1)+" seconds "+(difference>0?"over":"under")+" the target before any extra closing jingle.")+'</span>'+(difference>0&&project.settings.duration_mode==="exact"?'<p class="problem">Remove a segment or set trim points before building.</p>':"");
+  $("timing").innerHTML='<strong>'+seconds(result.base_seconds)+'</strong><span>'+(result.missing.length?"Planning estimate · "+result.missing.length+" segment(s) still need audio.":project.settings.duration_mode==="natural"?"Natural duration · determined by your recordings and selected transitions.":Math.abs(difference).toFixed(1)+" seconds "+(difference>0?"over":"under")+" the target before any extra closing jingle.")+'</span>'+(difference>0&&project.settings.duration_mode==="exact"?'<p class="problem">Remove a segment or set trim points before building.</p>':"");
   return result;
 }
 function safe(action) {return async(event)=>{try{await action(event);}catch(error){notify(error.message,true);}};}
-async function createProject() {
-  if(dirty&&!confirm("Discard unsaved changes and create a new show?"))return;
-  project=await api("/api/projects",jsonRequest("POST",{title:"Untitled show"}));
+async function createProject(preset) {
+  if(dirty&&!confirm("Discard unsaved changes and create a new project?"))return;
+  project=await api("/api/projects",jsonRequest("POST",{preset}));
   fillProject();showStep("idea");await projectsList();notify("");
 }
-$("new-project").onclick=$("start-project").onclick=safe(createProject);
+$("new-project").onclick=safe(()=>createProject($("new-preset").value));
+$("start-project").onclick=safe(()=>createProject("podcast"));
+$("start-radio").onclick=safe(()=>createProject("radio"));
+$("new-preset").onchange=()=>{$("new-project").textContent=$("new-preset").value==="podcast"?"＋ New podcast":"＋ New radio show";};
 $("project-list").onclick=safe(async(event)=>{
   const b=event.target.closest("[data-project]");if(!b||busy)return;
-  if(dirty&&!confirm("Discard unsaved changes and open this show?"))return;
+  if(dirty&&!confirm("Discard unsaved changes and open this project?"))return;
   project=await api("/api/projects/"+b.dataset.project);
   fillProject();showStep("idea");await projectsList();notify("");
 });
-$("save").onclick=safe(async()=>{await save();notify("Show saved on your computer.");});
+$("save").onclick=safe(async()=>{await save();notify("Project saved on your computer.");});
 document.querySelectorAll("[data-step]").forEach(b=>b.onclick=safe(async()=>{if(dirty)await save();showStep(b.dataset.step);}));
-$("editor").addEventListener("input",event=>{if(!event.target.closest("#api-key,#provider,#model,#base-url,#protocol,#max-tokens,#request-timeout,#music-percent"))markDirty();});
+$("editor").addEventListener("input",event=>{if(!event.target.closest("#api-key,#provider,#model,#base-url,#protocol,#max-tokens,#request-timeout"))markDirty();});
 $("bed").oninput=()=>{$("bed-value").textContent=$("bed").value+" dB";};
 $("provider").onchange=selectProvider;
 $("load-models").onclick=safe(async()=>{
@@ -185,7 +190,7 @@ $("load-models").onclick=safe(async()=>{
   finally{$("load-models").disabled=false;}
 });
 $("generate").onclick=safe(async()=>{
-  await save(); if(!project.idea.trim())throw new Error("Describe your show idea first.");
+  await save(); if(!project.idea.trim())throw new Error("Describe your episode or show idea first.");
   if(project.entries.length&&!confirm("Replace this rundown with a new draft? Your uploaded files will remain available."))return;
   const result=await api(projectURL("/generate"),jsonRequest("POST",{provider:providerConfig(),music_percent:Number($("music-percent").value),replace_existing:true}));
   await watchJob(result.job_id,"generate");
@@ -193,7 +198,9 @@ $("generate").onclick=safe(async()=>{
 $("blank").onclick=safe(async()=>{
   capture();
   if(project.entries.length){showStep("rundown");return;}
-  project.entries=[newEntry("speech"),newEntry("music"),newEntry("speech")];
+  project.entries=project.preset==="podcast"
+    ? ["Opening","Main story","Closing"].map(title=>({...newEntry("speech"),title}))
+    : [newEntry("speech"),newEntry("music"),newEntry("speech")];
   renderSegments();await save();showStep("rundown");
 });
 $("import-json").onchange=safe(async(event)=>{
@@ -246,6 +253,8 @@ $("quit-app").onclick=safe(async()=>{
   $("editor").inert=true;
   $("new-project").disabled=true;
   $("start-project").disabled=true;
+  $("start-radio").disabled=true;
+  $("new-preset").disabled=true;
   notify("Radio Show Builder has stopped. You can close this tab. Reopen the app to continue.");
 });
 (async()=>{

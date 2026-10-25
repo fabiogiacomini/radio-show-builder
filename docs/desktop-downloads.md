@@ -1,11 +1,13 @@
 # Portable downloads
 
-Radio Show Builder — The independent radio toolkit. Created by Fabio Giacomini.
+Radio Show Builder — The independent toolkit for podcasts and radio. Created by Fabio Giacomini.
 
 Download the package for your computer from:
-https://github.com/fabiogiacomini/radio-show-builder/releases/tag/v0.2.0
+https://github.com/fabiogiacomini/radio-show-builder/releases/tag/v0.3.0
 
 These are early portable builds. Python and the FFmpeg audio engine are included. No terminal setup, administrator access, subscription to the app or separate Python installation is required. A desktop browser is required. AI services may require their own account and API key; local models and manually written scripts remain supported.
+
+Start with **Create a podcast** for a spoken-only episode with natural duration. Music and jingles are optional. Choose **Create a radio show** for the music-led broadcast preset. See the user guide in the repository for the complete workflow.
 
 ## Choose a download
 
@@ -42,9 +44,9 @@ The archive preserves executable permissions. This is a glibc desktop build, not
 
 ## Use, quit and update
 
-The interface runs locally in your browser. Use **Quit app** in the top bar when finished; closing the browser tab alone does not stop the local server. Wait for any running render to finish before quitting. Changes in the current show are saved before quitting.
+The interface runs locally in your browser. Use **Quit app** in the top bar when finished; closing the browser tab alone does not stop the local server. Wait for any running render to finish before quitting. Changes in the current project are saved before quitting.
 
-Shows are stored in the .radio-show-builder directory in your home folder, outside the application bundle. Keep a backup of this folder, including audio assets, before updating. Replacing the application does not remove show data. No programme audio, personal voice or API key is included in the downloads.
+Episodes and shows are stored in the .radio-show-builder directory in your home folder, outside the application bundle. Keep a backup of this folder, including audio assets, before updating. Replacing the application does not remove show data. No programme audio, personal voice or API key is included in the downloads.
 
 Reopening the app while it is running opens the same studio rather than another server. If a browser does not open automatically, open launch-url.txt inside the .radio-show-builder folder in your home directory and copy that address into your browser. This private session address is removed when the app exits; do not share it. The app uses an available local port in portable builds. It does not expose the server to the network.
 

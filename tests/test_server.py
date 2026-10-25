@@ -54,6 +54,17 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(self.req("GET",base+"/project.json")[0],200)
         self.assertEqual(self.req("GET","/api/projects/../../etc/passwd")[0],400)
 
+    def test_project_creation_and_saved_music_share(self):
+        podcast = json.loads(self.req("POST", "/api/projects", {})[1])
+        self.assertEqual((podcast["preset"], podcast["music_percent"]), ("podcast", 0))
+        self.assertEqual(podcast["settings"]["duration_mode"], "natural")
+        radio = json.loads(self.req("POST", "/api/projects", {"preset": "radio"})[1])
+        self.assertEqual(radio["settings"]["target_seconds"], 5400)
+        path = "/api/projects/" + podcast["id"]
+        self.assertEqual(self.req("PUT", path, {"music_percent": 15})[0], 200)
+        self.assertEqual(json.loads(self.req("GET", path)[1])["music_percent"], 15)
+        self.assertEqual(self.req("POST", "/api/projects", {"preset": "unknown"})[0], 400)
+
     def test_binary_range_and_security_headers(self):
         p = self.app.store.create("Range test")
         aid = "a"*32
